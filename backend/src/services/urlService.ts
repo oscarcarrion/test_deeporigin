@@ -152,8 +152,11 @@ export class UrlService {
   /**
    * Get all URLs for a user
    */
-  async getUserUrls(userId: string): Promise<Url[]> {
-    const { data, error } = await supabase
+  async getUserUrls(userId: string, accessToken?: string): Promise<Url[]> {
+    // use authenticated client when token is provided
+    const supabaseClient = this.getSupabaseClient(accessToken);
+
+    const { data, error } = await supabaseClient
       .from("urls")
       .select("*")
       .eq("user_id", userId)
@@ -191,7 +194,8 @@ export class UrlService {
   async updateUrlSlug(
     urlId: string,
     newSlug: string,
-    userId?: string
+    userId?: string,
+    accessToken?: string
   ): Promise<Url> {
     if (!isValidCustomSlug(newSlug)) {
       throw new Error("Invalid slug format");
@@ -210,7 +214,9 @@ export class UrlService {
       updated_at: new Date().toISOString(),
     };
 
-    let query = supabase.from("urls").update(updateData).eq("id", urlId);
+    // use authenticated client when token is provided
+    const supabaseClient = this.getSupabaseClient(accessToken);
+    let query = supabaseClient.from("urls").update(updateData).eq("id", urlId);
 
     // If userId provided, ensure user owns the URL
     if (userId) {
@@ -229,8 +235,14 @@ export class UrlService {
   /**
    * Delete URL
    */
-  async deleteUrl(urlId: string, userId?: string): Promise<void> {
-    let query = supabase.from("urls").delete().eq("id", urlId);
+  async deleteUrl(
+    urlId: string,
+    userId?: string,
+    accessToken?: string
+  ): Promise<void> {
+    // same as above, use authenticated client when token is provided
+    const supabaseClient = this.getSupabaseClient(accessToken);
+    let query = supabaseClient.from("urls").delete().eq("id", urlId);
 
     // If userId provided, ensure user owns the URL
     if (userId) {

@@ -80,7 +80,10 @@ router.get(
       let urls;
 
       if (req.user?.id) {
-        urls = await urlService.getUserUrls(req.user.id);
+        // extract access token for authenticated users
+        const authHeader = req.headers.authorization;
+        const accessToken = authHeader && authHeader.split(" ")[1];
+        urls = await urlService.getUserUrls(req.user.id, accessToken);
       } else {
         urls = await urlService.getAllUrls();
       }
@@ -129,7 +132,14 @@ router.put(
 
       // req.user is guaranteed to exist after authenticateToken middleware
       const userId = req.user!.id;
-      const updatedUrl = await urlService.updateUrlSlug(id, slug, userId);
+      const authHeader = req.headers.authorization;
+      const accessToken = authHeader && authHeader.split(" ")[1];
+      const updatedUrl = await urlService.updateUrlSlug(
+        id,
+        slug,
+        userId,
+        accessToken
+      );
 
       res.json({
         success: true,
@@ -167,7 +177,9 @@ router.delete(
 
       // req.user is guaranteed to exist after authenticateToken middleware
       const userId = req.user!.id;
-      await urlService.deleteUrl(id, userId);
+      const authHeader = req.headers.authorization;
+      const accessToken = authHeader && authHeader.split(" ")[1];
+      await urlService.deleteUrl(id, userId, accessToken);
 
       res.json({
         success: true,
