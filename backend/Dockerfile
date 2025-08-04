@@ -7,8 +7,8 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY package.json ./
+RUN npm install
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -28,10 +28,12 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 expressjs
 
+# Install only production dependencies for runtime
+COPY package.json ./
+RUN npm install --only=production && npm cache clean --force
+
 # Copy built application
 COPY --from=builder --chown=expressjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=expressjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=expressjs:nodejs /app/package.json ./package.json
 
 USER expressjs
 

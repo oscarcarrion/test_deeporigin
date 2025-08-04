@@ -2,8 +2,8 @@
 const nextConfig = {
   output: "standalone",
   experimental: {
-    // This is required to work with Docker
-    outputFileTracingRoot: undefined,
+    // This is required to work with Docker in monorepo/workspace
+    outputFileTracingRoot: "..",
   },
   // Disable eslint during builds for faster production builds
   eslint: {
