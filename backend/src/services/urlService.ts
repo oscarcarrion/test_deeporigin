@@ -102,7 +102,12 @@ export class UrlService {
       throw new Error(`Failed to create short URL: ${error.message}`);
     }
 
-    const baseUrl = process.env["BASE_URL"] || "http://localhost:3001";
+    // use BASE_URL for short URLs (should NOT include /api)
+    // if BASE_URL includes /api, remove it for short URL construction
+    let baseUrl = process.env["BASE_URL"] || "http://localhost:3001";
+    if (baseUrl.endsWith("/api")) {
+      baseUrl = baseUrl.slice(0, -4);
+    }
 
     return {
       id: data.id,
@@ -121,8 +126,19 @@ export class UrlService {
     shortCode: string,
     visitorInfo?: Partial<UrlVisit>
   ): Promise<string | null> {
-    // Get the URL
-    const { data: urlData, error } = await supabase
+    // create a Supabase client with service role for redirects to bypass RLS
+    const supabaseServiceKey = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+    let supabaseClient = supabase;
+
+    if (supabaseServiceKey) {
+      const supabaseUrl = process.env["SUPABASE_URL"];
+      if (supabaseUrl) {
+        supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
+      }
+    }
+
+    // get the URL - using service role bypasses RLS for redirects
+    const { data: urlData, error } = await supabaseClient
       .from("urls")
       .select("*")
       .eq("short_code", shortCode)
@@ -133,7 +149,7 @@ export class UrlService {
       return null;
     }
 
-    // Record the visit
+    // record the visit using anonymous client (this should work with current policy)
     try {
       await supabase.from("url_visits").insert({
         url_id: urlData.id,

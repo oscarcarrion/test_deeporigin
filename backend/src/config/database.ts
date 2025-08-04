@@ -54,6 +54,10 @@ ALTER TABLE url_visits ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view own URLs" ON urls
   FOR SELECT USING (auth.uid() = user_id OR user_id IS NULL);
 
+-- Allow anyone to access active URLs for redirects
+CREATE POLICY "Anyone can access active URLs for redirects" ON urls
+  FOR SELECT USING (is_active = true);
+
 CREATE POLICY "Users can insert URLs" ON urls
   FOR INSERT WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 
