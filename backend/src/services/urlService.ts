@@ -1,4 +1,5 @@
 import { supabase } from "../config/database";
+import { createClient } from "@supabase/supabase-js";
 import {
   Url,
   CreateUrlRequest,
@@ -16,9 +17,38 @@ import { isValidUrl, normalizeUrl, isSafeUrl } from "../utils/urlValidator";
 
 export class UrlService {
   /**
+   * Create an authenticated Supabase client if access token is provided
+   */
+  private getSupabaseClient(accessToken?: string) {
+    if (accessToken) {
+      const supabaseUrl = process.env["SUPABASE_URL"];
+      const supabaseKey = process.env["SUPABASE_ANON_KEY"];
+
+      if (!supabaseUrl || !supabaseKey) {
+        throw new Error("Missing Supabase environment variables");
+      }
+
+      const authenticatedClient = createClient(supabaseUrl, supabaseKey, {
+        global: {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      });
+
+      return authenticatedClient;
+    }
+
+    return supabase; // Fall back to anonymous client
+  }
+
+  /**
    * Create a shortened URL
    */
-  async createShortUrl(request: CreateUrlRequest): Promise<CreateUrlResponse> {
+  async createShortUrl(
+    request: CreateUrlRequest,
+    accessToken?: string
+  ): Promise<CreateUrlResponse> {
     const { original_url, custom_slug, user_id } = request;
 
     // Validate the original URL
@@ -53,8 +83,11 @@ export class UrlService {
       shortCode = await generateUniqueShortCode();
     }
 
+    // Get the appropriate Supabase client (authenticated if user token provided)
+    const supabaseClient = this.getSupabaseClient(accessToken);
+
     // Insert into database
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from("urls")
       .insert({
         original_url: normalizedUrl,

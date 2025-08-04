@@ -44,7 +44,14 @@ router.post(
         createUrlRequest.custom_slug = custom_slug;
       }
 
-      const urlData = await urlService.createShortUrl(createUrlRequest);
+      // Extract access token from Authorization header
+      const authHeader = req.headers.authorization;
+      const accessToken = authHeader && authHeader.split(" ")[1];
+
+      const urlData = await urlService.createShortUrl(
+        createUrlRequest,
+        accessToken
+      );
 
       res.status(201).json({
         success: true,
