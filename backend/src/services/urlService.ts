@@ -102,12 +102,7 @@ export class UrlService {
       throw new Error(`Failed to create short URL: ${error.message}`);
     }
 
-    // use BASE_URL for short URLs (should NOT include /api)
-    // if BASE_URL includes /api, remove it for short URL construction
-    let baseUrl = process.env["BASE_URL"] || "http://localhost:3001";
-    if (baseUrl.endsWith("/api")) {
-      baseUrl = baseUrl.slice(0, -4);
-    }
+    const baseUrl = process.env["BASE_URL"] || "http://localhost:3001";
 
     return {
       id: data.id,

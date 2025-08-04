@@ -22,9 +22,11 @@ if [ ! -f .env ]; then
         echo "📝 Please edit .env file with your Supabase credentials before continuing."
         echo "   Required variables:"
         echo "   - SUPABASE_URL"
-        echo "   - SUPABASE_ANON_KEY"
+        echo "   - SUPABASE_ANON_KEY" 
+        echo "   - SUPABASE_SERVICE_ROLE_KEY"
         echo "   - NEXT_PUBLIC_SUPABASE_URL"
         echo "   - NEXT_PUBLIC_SUPABASE_ANON_KEY"
+        echo "   - NEXT_PUBLIC_BASE_URL"
         echo ""
         read -p "Press enter when you've updated the .env file..."
     else

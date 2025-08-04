@@ -74,10 +74,11 @@ docker-compose up --build
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `SUPABASE_URL` | Your Supabase project URL | `https://xxx.supabase.co` |
-| `SUPABASE_ANON_KEY` | Your Supabase anon key | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
-| `NEXT_PUBLIC_SUPABASE_URL` | Same as SUPABASE_URL (for frontend) | `https://xxx.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Same as SUPABASE_ANON_KEY (for frontend) | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `SUPABASE_URL` | Your Supabase project URL 
+| `SUPABASE_ANON_KEY` | Your Supabase anon key
+| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service role key 
+| `NEXT_PUBLIC_SUPABASE_URL` | Same as SUPABASE_URL (for frontend) 
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Same as SUPABASE_ANON_KEY (for frontend)
 
 ### Optional Variables
 
@@ -85,8 +86,9 @@ docker-compose up --build
 |----------|-------------|---------|
 | `PORT` | Backend port | `3001` |
 | `BASE_URL` | Backend base URL | `http://localhost:3001` |
-| `FRONTEND_URL` | Frontend URL | `http://localhost:3000` |
-| `NEXT_PUBLIC_API_URL` | API URL for frontend | `http://localhost:3001` |
+| `FRONTEND_URL` | Frontend URL for CORS | `http://localhost:3000` |
+| `NEXT_PUBLIC_BASE_URL` | Base URL for short URLs | `http://localhost:3001` |
+
 
 ## Database Schema
 

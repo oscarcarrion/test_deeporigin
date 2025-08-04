@@ -11,7 +11,7 @@ import {
   EyeIcon,
   LinkIcon,
 } from "@heroicons/react/24/outline";
-import { apiClient } from "@/lib/api";
+import { apiClient, BASE_URL } from "@/lib/api";
 import { Url } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -44,9 +44,7 @@ export default function UrlList() {
     try {
       const fullUrl = shortUrl.startsWith("http")
         ? shortUrl
-        : `${
-            process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"
-          }/${shortUrl}`;
+        : `${BASE_URL}/${shortUrl}`;
 
       await navigator.clipboard.writeText(fullUrl);
       setCopiedId(id);
@@ -159,11 +157,7 @@ export default function UrlList() {
                 <div className="flex items-center space-x-2 mb-2">
                   {editingId === url.id ? (
                     <div className="flex items-center space-x-2 flex-1">
-                      <span className="text-sm text-zinc-400">
-                        {process.env.NEXT_PUBLIC_API_URL ||
-                          "http://localhost:3001"}
-                        /
-                      </span>
+                      <span className="text-sm text-zinc-400">{BASE_URL}/</span>
                       <input
                         type="text"
                         value={editSlug}

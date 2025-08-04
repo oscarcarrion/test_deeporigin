@@ -1,5 +1,8 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3001";
+const API_BASE_URL = `${BASE_URL}/api`;
+
+// export base URL for use in components
+export { BASE_URL };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface ApiResponse<T = any> {
@@ -10,17 +13,17 @@ export interface ApiResponse<T = any> {
 }
 
 class ApiClient {
-  private baseUrl: string;
+  private apiBaseUrl: string;
 
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
+  constructor(apiBaseUrl: string) {
+    this.apiBaseUrl = apiBaseUrl;
   }
 
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
-    const url = `${this.baseUrl}${endpoint}`;
+    const url = `${this.apiBaseUrl}${endpoint}`;
 
     const defaultHeaders: Record<string, string> = {
       "Content-Type": "application/json",

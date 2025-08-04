@@ -48,9 +48,9 @@ url-shortener/
 - Docker (optional)
 
 ### Environment Setup
-1. Copy `.env.example` files in both frontend and backend directories
-2. Fill in your Supabase credentials
-3. Set up your Supabase database tables (see backend/README.md)
+1. Create `.env` file in the root directory with your Supabase credentials
+2. Set up your Supabase database tables using the SQL in `backend/src/config/database.ts`
+3. See `SETUP.md` for detailed environment variable configuration
 
 ### Development
 ```bash
